@@ -4,4 +4,4 @@ A music player where you can download mp3 audio from youtube videos and play it 
 
 ## Demo
 
-![](youtube.gif | height=600)
+<img src="./youtube.gif" height="600">
