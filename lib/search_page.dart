@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -74,7 +76,8 @@ class SearchPage extends ConsumerWidget {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     child: Text(
                       "Playlists",
                       style: mediumTitle,
@@ -83,7 +86,8 @@ class SearchPage extends ConsumerWidget {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     child: SizedBox(
                       height: 100,
                       child: ValueListenableBuilder(
@@ -99,21 +103,26 @@ class SearchPage extends ConsumerWidget {
                                     },
                                     color: backGround,
                                     shape: RoundedRectangleBorder(
-                                      side: const BorderSide(color: Colors.white54, width: 1),
+                                      side: const BorderSide(
+                                          color: Colors.white54, width: 1),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     minWidth: 100,
                                     padding: const EdgeInsets.all(15),
-                                    child: const Icon(Icons.add, size: 30, color: Colors.white),
+                                    child: const Icon(Icons.add,
+                                        size: 30, color: Colors.white),
                                   );
                                 }
-                                final item = CPlaylist.fromJson(val.getAt(index));
+                                final item =
+                                    CPlaylist.fromJson(val.getAt(index));
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 15),
                                   child: MaterialButton(
                                     onPressed: () {
                                       Navigator.of(context).push(
-                                        MaterialPageRoute(builder: (context) => PlaylistPage(playlist: item)),
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PlaylistPage(playlist: item)),
                                       );
                                     },
                                     color: purple,
@@ -133,7 +142,8 @@ class SearchPage extends ConsumerWidget {
                 ),
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
                     child: Text(
                       "All Songs",
                       style: mediumTitle,
@@ -143,7 +153,10 @@ class SearchPage extends ConsumerWidget {
                 ValueListenableBuilder(
                   valueListenable: hiveRepo.songBox.listenable(),
                   builder: (context, val, child) {
-                    final items = val.values.toList().map((e) => LocalVideo.fromJson(e)).toList();
+                    final items = val.values
+                        .toList()
+                        .map((e) => LocalVideo.fromJson(e))
+                        .toList();
                     if (items.isEmpty) {
                       return SliverToBoxAdapter(
                         child: Padding(
@@ -160,7 +173,8 @@ class SearchPage extends ConsumerWidget {
                         items.mapIndexed(
                           (currentValue, index) {
                             return Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 10),
                               child: Slidable(
                                 key: ValueKey(currentValue),
                                 endActionPane: ActionPane(
@@ -187,7 +201,8 @@ class SearchPage extends ConsumerWidget {
                                     children: [
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
                                               currentValue.name,
@@ -206,17 +221,20 @@ class SearchPage extends ConsumerWidget {
                                       PopupMenuButton(
                                         color: purple,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                         ),
                                         itemBuilder: (context) {
                                           return hiveRepo.playListKeys.map(
                                             (e) {
                                               return PopupMenuItem(
                                                 onTap: () {
-                                                  hiveRepo.addSongToPlaylist(e, currentValue);
+                                                  hiveRepo.addSongToPlaylist(
+                                                      e, currentValue);
                                                 },
                                                 value: e,
-                                                child: Text(e, style: smallBody),
+                                                child:
+                                                    Text(e, style: smallBody),
                                               );
                                             },
                                           ).toList();
@@ -227,20 +245,25 @@ class SearchPage extends ConsumerWidget {
                                             color: orange,
                                             shape: BoxShape.circle,
                                           ),
-                                          child: const Icon(Icons.playlist_add, color: Colors.white),
+                                          child: const Icon(Icons.playlist_add,
+                                              color: Colors.white),
                                         ),
                                       ),
                                       15.widthBox,
                                       MaterialButton(
                                         minWidth: 0,
                                         padding: const EdgeInsets.all(5),
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
                                         onPressed: () {
-                                          AudioControls.playSong(currentValue, ref);
+                                          AudioControls.playSong(
+                                              currentValue, ref);
                                         },
                                         color: purple,
                                         shape: const CircleBorder(),
-                                        child: const Icon(Icons.play_arrow_rounded, color: Colors.white),
+                                        child: const Icon(
+                                            Icons.play_arrow_rounded,
+                                            color: Colors.white),
                                       ),
                                     ],
                                   ),
@@ -261,17 +284,22 @@ class SearchPage extends ConsumerWidget {
               right: 0,
               child: GestureDetector(
                 onTap: () async {
-                  final result = await showSearch<Video?>(context: context, delegate: YTSearch());
+                  final result = await showSearch<Video?>(
+                      context: context, delegate: YTSearch());
                   if (result == null) return;
+
+                  final sep = Platform.pathSeparator;
 
                   LocalVideo localVideo = LocalVideo(
                     id: result.id.value,
                     name: result.title,
                     author: result.author,
                     thumbnail: result.thumbnails.highResUrl,
-                    path: "${(await getApplicationDocumentsDirectory()).path}/music/${result.title}.mp3",
+                    path:
+                        "${(await getApplicationDocumentsDirectory()).path}${sep}music$sep${result.id}.mp3",
                   );
-                  context.showToast(msg: "Downloading will appear here after done");
+                  context.showToast(
+                      msg: "Downloading will appear here after done");
                   final downStream = ytRepo.downloadVideo(localVideo);
                   final sub = downStream.listen(
                     (event) {},
@@ -279,12 +307,14 @@ class SearchPage extends ConsumerWidget {
                       hiveRepo.addSong(localVideo);
                     },
                     onError: (err) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Error Downloading")));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Error Downloading")));
                     },
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   margin: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -365,6 +395,65 @@ class YTSearch extends SearchDelegate<Video?> {
             if (snapshot.data == null) {
               return const Center(
                 child: Text("Sorry Bad Results"),
+              );
+            }
+
+            if (context.screenWidth > 480) {
+              return SizedBox.expand(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 240,
+                      mainAxisExtent: 380,
+                      // childAspectRatio: 0.7,6
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final item = snapshot.data![index];
+                    return GestureDetector(
+                      onTap: () {
+                        close(context, item);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Stack(
+                              children: [
+                                Image.network(
+                                  item.thumbnails.mediumResUrl,
+                                  height: 220,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                                Positioned(
+                                  right: 8,
+                                  bottom: 8,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                    ),
+                                    child: Text(
+                                      item.duration != null
+                                          ? "${item.duration!.inMinutes}:${item.duration!.inSeconds % 60}"
+                                          : "None",
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            5.heightBox,
+                            Text("Title : ${item.title}", style: smallTitle),
+                            Text("Author : ${item.author}", style: smallBody),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               );
             }
             return SizedBox.expand(

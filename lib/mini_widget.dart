@@ -1,6 +1,6 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:badges/badges.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:miniplayer/miniplayer.dart';
@@ -39,12 +39,17 @@ class MiniPWidget extends ConsumerWidget {
                         stream: audioProv.audioPlayer.sequenceStateStream,
                         builder: (context, snapshot) {
                           if (snapshot.data == null) {
-                            return const SizedBox(width: 20, height: 20, child: CircularProgressIndicator());
+                            return const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator());
                           }
                           return Row(
                             children: [
                               Image.network(
-                                (snapshot.data!.currentSource!.tag as LocalVideo).thumbnail,
+                                (snapshot.data!.currentSource!.tag
+                                        as LocalVideo)
+                                    .thumbnail,
                                 height: 65,
                                 width: context.screenWidth * 0.3,
                                 fit: BoxFit.cover,
@@ -55,13 +60,17 @@ class MiniPWidget extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      (snapshot.data!.currentSource!.tag as LocalVideo).name,
+                                      (snapshot.data!.currentSource!.tag
+                                              as LocalVideo)
+                                          .name,
                                       maxLines: 2,
                                       style: smallTitle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     Text(
-                                      (snapshot.data!.currentSource!.tag as LocalVideo).author,
+                                      (snapshot.data!.currentSource!.tag
+                                              as LocalVideo)
+                                          .author,
                                       maxLines: 1,
                                       style: smallBody,
                                     ),
@@ -80,7 +89,10 @@ class MiniPWidget extends ConsumerWidget {
                         final data = snapshot.data!;
                         if (data.processingState == ProcessingState.idle ||
                             data.processingState == ProcessingState.loading) {
-                          return const SizedBox(width: 20, height: 20, child: CircularProgressIndicator());
+                          return const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator());
                         }
                         if (data.processingState == ProcessingState.completed) {
                           return IconButton(
@@ -110,7 +122,8 @@ class MiniPWidget extends ConsumerWidget {
                             onPressed: () async {
                               await audioProv.audioPlayer.play();
                             },
-                            icon: const Icon(Icons.play_arrow_rounded, color: Colors.white),
+                            icon: const Icon(Icons.play_arrow_rounded,
+                                color: Colors.white),
                           );
                         }
                         return const SizedBox.shrink();
@@ -164,9 +177,12 @@ class MiniPWidget extends ConsumerWidget {
                       children: [
                         IconButton(
                           onPressed: () {
-                            ref.read(miniControllerProvider).animateToHeight(state: PanelState.MIN);
+                            ref
+                                .read(miniControllerProvider)
+                                .animateToHeight(state: PanelState.MIN);
                           },
-                          icon: const Icon(Icons.arrow_back_outlined, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back_outlined,
+                              color: Colors.white),
                         ),
                         20.widthBox,
                         Text("Playing Now", style: mediumTitle),
@@ -177,9 +193,13 @@ class MiniPWidget extends ConsumerWidget {
                       stream: audioProv.audioPlayer.sequenceStateStream,
                       builder: (context, snapshot) {
                         if (snapshot.data == null) {
-                          return const SizedBox(width: 20, height: 20, child: CircularProgressIndicator());
+                          return const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator());
                         }
-                        final data = snapshot.data!.currentSource!.tag as LocalVideo;
+                        final data =
+                            snapshot.data!.currentSource!.tag as LocalVideo;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -193,7 +213,10 @@ class MiniPWidget extends ConsumerWidget {
                               ),
                             ),
                             15.heightBox,
-                            Text(data.name, style: mediumTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(data.name,
+                                style: mediumTitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis),
                             10.heightBox,
                             Text(data.author, style: smallTitle),
                           ],
@@ -220,7 +243,8 @@ class MiniPWidget extends ConsumerWidget {
                           barCapShape: BarCapShape.round,
                           timeLabelLocation: TimeLabelLocation.below,
                           timeLabelPadding: 10,
-                          timeLabelTextStyle: smallTitle.copyWith(color: Colors.white54),
+                          timeLabelTextStyle:
+                              smallTitle.copyWith(color: Colors.white54),
                           progress: snapshot.data!.position,
                           total: snapshot.data!.duration,
                           thumbRadius: 3.5,
@@ -243,15 +267,18 @@ class MiniPWidget extends ConsumerWidget {
                           onPressed: () {
                             audioProv.audioPlayer.seekToPrevious();
                           },
-                          icon: const Icon(Icons.skip_previous_outlined, color: Colors.white),
+                          icon: const Icon(Icons.skip_previous_outlined,
+                              color: Colors.white),
                         ),
                         MaterialButton(
                           minWidth: 0,
                           padding: const EdgeInsets.all(15),
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                           onPressed: () async {
                             final data = audioProv.audioPlayer.playerState;
-                            if (data.processingState == ProcessingState.completed) {
+                            if (data.processingState ==
+                                ProcessingState.completed) {
                               await audioProv.audioPlayer.seek(Duration.zero);
                               audioProv.audioPlayer.play();
                               return;
@@ -265,15 +292,22 @@ class MiniPWidget extends ConsumerWidget {
                           color: purple,
                           shape: const CircleBorder(),
                           child: StreamBuilder<PlayerState>(
-                            initialData: PlayerState(false, ProcessingState.idle),
+                            initialData:
+                                PlayerState(false, ProcessingState.idle),
                             stream: audioProv.audioPlayer.playerStateStream,
                             builder: (context, snapshot) {
                               final data = snapshot.data!;
-                              if (data.processingState == ProcessingState.idle ||
-                                  data.processingState == ProcessingState.loading) {
-                                return const SizedBox(width: 20, height: 20, child: CircularProgressIndicator());
+                              if (data.processingState ==
+                                      ProcessingState.idle ||
+                                  data.processingState ==
+                                      ProcessingState.loading) {
+                                return const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator());
                               }
-                              if (data.processingState == ProcessingState.completed) {
+                              if (data.processingState ==
+                                  ProcessingState.completed) {
                                 return const Icon(
                                   Icons.replay,
                                   color: Colors.white,
@@ -302,7 +336,8 @@ class MiniPWidget extends ConsumerWidget {
                           onPressed: () {
                             audioProv.audioPlayer.seekToNext();
                           },
-                          icon: const Icon(Icons.skip_next_outlined, color: Colors.white),
+                          icon: const Icon(Icons.skip_next_outlined,
+                              color: Colors.white),
                         ),
                         IconButton(
                           onPressed: () {
@@ -323,17 +358,20 @@ class MiniPWidget extends ConsumerWidget {
                             stream: audioProv.audioPlayer.loopModeStream,
                             builder: (context, snapshot) {
                               if (snapshot.data == LoopMode.off) {
-                                return const Icon(Icons.loop, color: Colors.white);
+                                return const Icon(Icons.loop,
+                                    color: Colors.white);
                               }
                               if (snapshot.data == LoopMode.one) {
                                 return Badge(
                                   badgeContent: Text("1", style: smallBody),
-                                  child: const Icon(Icons.loop, color: Colors.white),
+                                  child: const Icon(Icons.loop,
+                                      color: Colors.white),
                                 );
                               }
                               return Badge(
                                 badgeContent: Text("all", style: smallBody),
-                                child: const Icon(Icons.loop, color: Colors.white),
+                                child:
+                                    const Icon(Icons.loop, color: Colors.white),
                               );
                             },
                           ),
